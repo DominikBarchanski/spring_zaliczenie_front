@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="apiLogin.js"></script>
+    <title>Strona Główna</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">Logo</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="bmiCalc.html">Kalkulator BMI</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="history.html">Historia z tabelką</a>
+                </li>
+            </ul>
+            <div>
+
+            </div>
+            <span id="logged-in-user" class="navbar-text ml-auto"></span>
+            <button id="logout-button" class="btn btn-secondary ml-2" style="display:none;">Wyloguj</button>
+        </div>
+
+    </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Strona Główna</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Logowanie</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email_log">E-mail</label>
+                    <input type="email" class="form-control" id="email_log" placeholder="Wprowadź adres e-mail"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="password_log">Hasło</label>
+                    <input type="password" class="form-control" id="password_log" placeholder="Wprowadź hasło" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Zaloguj się</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <h2>Rejestracja</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="email_reg">E-mail</label>
+                    <input type="email" class="form-control" id="email_reg" placeholder="Wprowadź adres e-mail"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="password_reg">Hasło</label>
+                    <input type="password" class="form-control" id="password_reg" placeholder="Wprowadź hasło" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password_reg">Potwierdź hasło</label>
+                    <input type="password" class="form-control" id="confirm-password_reg" placeholder="Potwierdź hasło"
+                           required>
+                </div>
+                <button type="submit" class="btn btn-primary">Zarejestruj się</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('logout-button').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Usuń zalogowanego użytkownika z lokalnego magazynu
+        localStorage.removeItem('user');
+
+        // Odśwież stan interfejsu użytkownika
+        checkUserLoggedIn();
+    });
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById('email_log').value;
+        const password = document.getElementById('password_log').value;
+
+        loginUser({email: email, password: password});
+    });
+
+    document.getElementById('register-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById('email_reg').value;
+        const password = document.getElementById('password_reg').value;
+        const confirmPassword = document.getElementById('confirm-password_reg').value;
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match.');
+            return;
+        }
+
+        registerUser({email: email, password: password});
+    });
+
+    function disableNavbarLinks(isLoggedIn) {
+        const navbarLinks = document.querySelectorAll('.nav-link');
+        navbarLinks.forEach(link => {
+            if (isLoggedIn) {
+                link.classList.remove('disabled');
+            } else {
+                link.classList.add('disabled');
+            }
+        });
+    }
+
+    function checkUserLoggedIn() {
+        const loggedInUser = localStorage.getItem('user');
+        const logoutButton = document.getElementById('logout-button');
+
+        if (loggedInUser) {
+            document.getElementById('logged-in-user').textContent = `Zalogowany: ${loggedInUser}`;
+            if (logoutButton) logoutButton.style.display = 'inline-block';
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'none';
+        } else {
+            document.getElementById('logged-in-user').textContent = '';
+            if (logoutButton) logoutButton.style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('register-form').style.display = 'block';
+        }
+    }
+
+    // Call checkUserLoggedIn on page load
+    checkUserLoggedIn();
+</script>
+
+</body>
+</html>
